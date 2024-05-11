@@ -41,13 +41,15 @@ stack<Carta> gerarBaralho(){
         cartas.push(carta);
     }
 
+
+
     return cartas;
 }
 
-stack<Carta> gerarMesa(stack<Carta> &cartas){
-    stack<Carta> cartasMesa;
+vector<Carta> gerarMesa(stack<Carta> &cartas){
+    vector<Carta> cartasMesa;
     for(int i=0; i<4; i++){
-        cartasMesa.push(cartas.top());
+        cartasMesa.push_back(cartas.top());
         cartas.pop();
     }
     return cartasMesa;
@@ -57,10 +59,7 @@ int main(){
     srand(time(nullptr));
 
     stack<Carta> cartas = gerarBaralho();
-    cout << cartas.size() << endl;
-    stack<Carta> cartasMesa = gerarMesa(cartas);//colocado aqui para não dar o pop antes do print
-    cout << cartas.size() << endl;
-
+    vector<Carta> cartasMesa = gerarMesa(cartas);//colocado aqui para não dar o pop antes do print
 
     while(cartas.size() > 0){
         cout << cartas.top().numero << " " << cartas.top().naipe << endl;
@@ -69,8 +68,7 @@ int main(){
     }
 
     cout << endl;
-    while(cartasMesa.size() > 0){
-        cout << cartasMesa.top().numero << " " << cartasMesa.top().naipe << endl;
-        cartasMesa.pop();
+    for(int i=0; i<cartasMesa.size(); i++){
+        cout << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
     }
 }
