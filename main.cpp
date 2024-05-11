@@ -2,6 +2,7 @@
 #include <stack>
 #include <ctime>
 #include <vector>
+#define M 4
 
 using namespace std;
 
@@ -48,11 +49,40 @@ stack<Carta> gerarBaralho(){
 
 vector<Carta> gerarMesa(stack<Carta> &cartas){
     vector<Carta> cartasMesa;
-    for(int i=0; i<4; i++){
+    for(int i=0; i<M; i++){
         cartasMesa.push_back(cartas.top());
         cartas.pop();
     }
     return cartasMesa;
+}
+
+vector<Carta> distribuirCartas(stack<Carta> &cartas){
+    vector<Carta> player;
+    for(int i=0; i<M; i++){
+        player.push_back(cartas.top());
+        cartas.pop();
+    }
+    return player;
+}
+
+void print(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
+    cout << "baralho randomizado:" << endl;
+    while(cartas.size() > 0){
+        cout << cartas.top().numero << " " << cartas.top().naipe << endl;
+        int ultimo = cartas.top().numero;
+        cartas.pop();
+    }
+    
+    cout << endl << "cartas na mesa: " << endl;
+    for(int i=0; i<cartasMesa.size(); i++){
+        cout << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
+    }
+    cout << endl;
+
+    for(int i=0; i<cartasJogador1.size(); i++){
+        cout << "jogador 1: " << cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
+        cout << "jogador 2: " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
+    }
 }
 
 int main(){
@@ -60,15 +90,8 @@ int main(){
 
     stack<Carta> cartas = gerarBaralho();
     vector<Carta> cartasMesa = gerarMesa(cartas);//colocado aqui para não dar o pop antes do print
+    vector<Carta> cartasJogador1 = distribuirCartas(cartas);
+    vector<Carta> cartasJogador2 = distribuirCartas(cartas);
 
-    while(cartas.size() > 0){
-        cout << cartas.top().numero << " " << cartas.top().naipe << endl;
-        int ultimo = cartas.top().numero;
-        cartas.pop();
-    }
-
-    cout << endl;
-    for(int i=0; i<cartasMesa.size(); i++){
-        cout << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
-    }
+    print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
 }
