@@ -2,6 +2,7 @@
 #include <stack>
 #include <ctime>
 #include <vector>
+#include <functional>
 #define M 4
 
 using namespace std;
@@ -85,11 +86,28 @@ void print(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJo
     }
 }
 
+void menu(stack<Carta> cartas, vector<Carta> cartasMesa){
+    int selecionar;
+    cin >> selecionar;
+    
+    cout << "1- começar jogo" << endl;
+    cout << "sair" << endl;
+    switch (selecionar){
+    case 1:
+        gerarBaralho();
+        gerarMesa(cartas);
+        distribuirCartas(cartas);
+        break;
+    default:
+        break;
+    }
+}
+
 int main(){
     srand(time(nullptr));
 
     stack<Carta> cartas = gerarBaralho();
-    vector<Carta> cartasMesa = gerarMesa(cartas);//colocado aqui para não dar o pop antes do print
+    vector<Carta> cartasMesa = gerarMesa(cartas);
     vector<Carta> cartasJogador1 = distribuirCartas(cartas);
     vector<Carta> cartasJogador2 = distribuirCartas(cartas);
 
