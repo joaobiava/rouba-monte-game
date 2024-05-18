@@ -2,7 +2,6 @@
 #include <stack>
 #include <ctime>
 #include <vector>
-#include <functional>
 #define M 4
 
 using namespace std;
@@ -66,37 +65,116 @@ vector<Carta> distribuirCartas(stack<Carta> &cartas){
     return player;
 }
 
-void print(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
-    cout << "baralho randomizado:" << endl;
-    while(cartas.size() > 0){
-        cout << cartas.top().numero << " " << cartas.top().naipe << endl;
-        int ultimo = cartas.top().numero;
-        cartas.pop();
-    }
-    
+void print(vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){    
     cout << endl << "cartas na mesa: " << endl;
     for(int i=0; i<cartasMesa.size(); i++){
         cout << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
     }
     cout << endl;
 
-    for(int i=0; i<cartasJogador1.size(); i++){
+    for(int i=0; i<cartasJogador1.size() || i<cartasJogador2.size(); i++){
         cout << "jogador 1: " << cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
         cout << "jogador 2: " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
     }
 }
 
-void menu(stack<Carta> cartas, vector<Carta> cartasMesa){
+void EscolherCarta(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
+    int escolha, vezJogador = 0;
+    bool jogadaFeita = false;
+
+    while(!cartasJogador1.empty() || !cartasJogador2.empty()){
+        if(vezJogador%2 == 0){
+            for(int i=0; i<cartasJogador1.size(); i++){
+                for(int i=0; i<cartasJogador1.size(); i++){
+                    for(int j=0; j<cartasMesa.size(); j++){
+                        if(!cartasMesa.empty() && cartasJogador1[i].numero == cartasMesa[j].numero){
+                            cout << "escolha a carta da mesa que vai ser adicionada ao seu monte" << endl;
+                            for(int i=0; i<cartasMesa.size(); i++){
+                                cout << i << ". "<< cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
+                            }
+                            cin >> escolha;
+
+                            stack<Carta> monteJogador1;
+                            monteJogador1.push(cartasMesa[escolha]);
+                            cartasMesa.erase(cartasMesa.begin() + escolha);
+
+                            cout << "escolha a carta de sua mão que vai ser adicionada no monte" << endl;
+                            for(int i=0; i<cartasJogador1.size(); i++){
+                                cout << i << ". "<< cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
+                            }
+                            cin >> escolha;
+                            monteJogador1.push(cartasJogador1[escolha]);
+                            cartasJogador1.erase(cartasJogador1.begin() + escolha);
+                            jogadaFeita = true;
+                            vezJogador++;
+                        }
+                    }
+                }
+            }
+            if(!jogadaFeita) {
+                cout << "escolha qual das cartas colocar na mesa" << endl;
+                for(int i=0; i<cartasJogador1.size(); i++){
+                    cout << i << ". "<< cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
+                }
+                cin >> escolha;
+                cartasMesa.push_back(cartasJogador1[escolha]);
+                cartasJogador1.erase(cartasJogador1.begin() + escolha);
+                vezJogador++;
+            }
+        }
+        else{
+            jogadaFeita=false;
+            for(int i=0; i<cartasJogador2.size(); i++){
+                for(int j=0; i<cartasMesa.size(); j++){
+                    if(!cartasMesa.empty() && cartasJogador2[i].numero == cartasMesa[j].numero){
+                        print(cartasMesa, cartasJogador1, cartasJogador2);
+                        cout << "escolha a carta para ser adicionada ao seu monte" << endl;
+                        for(int i=0; i<cartasMesa.size(); i++){
+                            cout << i << ". " << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
+                        }
+                        cin >> escolha;
+
+                        stack<Carta> monteJogador2;
+                        monteJogador2.push(cartasMesa[escolha]);
+                        cartasMesa.erase(cartasMesa.begin() + escolha);
+
+                        cout << "escolha a carta que sera adicionada do seu monte" << endl;
+                        for(int i=0; i<cartasJogador2.size(); i++){
+                            cout << i << ". " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
+                        }
+                        cin >> escolha;
+                        monteJogador2.push(cartasJogador2[escolha]);
+                        cartasJogador2.erase(cartasJogador2.begin() + escolha);
+                        jogadaFeita=true;
+                        vezJogador++;
+                    }
+                }
+            }
+            if(!jogadaFeita){
+                cout << "escolha qual das cartas colocar na mesa" << endl;
+                for(int i=0; i<cartasJogador2.size(); i++){
+                    cout << i << ". " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
+                }
+                cin >> escolha;
+                cartasMesa.push_back(cartasJogador2[escolha]);
+                cartasJogador1.erase(cartasJogador2.begin() + escolha);
+                vezJogador++;
+            }
+        }
+    }
+}
+
+void menu(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
     int selecionar;
+    cout << "1- comecar jogo" << endl;
+    cout << "3- sair" << endl;
     cin >> selecionar;
-    
-    cout << "1- começar jogo" << endl;
-    cout << "sair" << endl;
+
     switch (selecionar){
     case 1:
-        gerarBaralho();
-        gerarMesa(cartas);
-        distribuirCartas(cartas);
+        print(cartasMesa, cartasJogador1, cartasJogador2);
+        cout << endl;
+        EscolherCarta(cartas, cartasMesa, cartasJogador1, cartasJogador2);
         break;
     default:
         break;
@@ -106,10 +184,14 @@ void menu(stack<Carta> cartas, vector<Carta> cartasMesa){
 int main(){
     srand(time(nullptr));
 
-    stack<Carta> cartas = gerarBaralho();
-    vector<Carta> cartasMesa = gerarMesa(cartas);
+    stack<Carta> cartas;
+    vector<Carta> cartasMesa;
+    cartas = gerarBaralho();
+    cartasMesa = gerarMesa(cartas);
     vector<Carta> cartasJogador1 = distribuirCartas(cartas);
     vector<Carta> cartasJogador2 = distribuirCartas(cartas);
-
-    print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
+    
+    while(true){
+        menu(cartas, cartasMesa, cartasJogador1, cartasJogador2);
+    }
 }

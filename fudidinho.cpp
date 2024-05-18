@@ -65,101 +65,114 @@ vector<Carta> distribuirCartas(stack<Carta> &cartas){
     return player;
 }
 
-void print(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
-    cout << "baralho randomizado:" << endl;
-    while(cartas.size() > 0){
-        cout << cartas.top().numero << " " << cartas.top().naipe << endl;
-        int ultimo = cartas.top().numero;
-        cartas.pop();
-    }
-    
+void print(vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){    
     cout << endl << "cartas na mesa: " << endl;
     for(int i=0; i<cartasMesa.size(); i++){
         cout << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
     }
     cout << endl;
 
-    for(int i=0; i<cartasJogador1.size(); i++){
+    for(int i=0; i<cartasJogador1.size() || i<cartasJogador2.size(); i++){
         cout << "jogador 1: " << cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
         cout << "jogador 2: " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
     }
 }
 
 void EscolherCarta(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
-    int i=0, j=0;
-    int vezJogador = 1;
-    int escolha;
+    int escolha, vezJogador = 0;
+    bool jogadaFeita = false;
 
-    if(vezJogador%2 != 0){
-        while(i<cartasMesa.size()){
-            if(true || false){
-                print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
-                cout << "escolha a carta para ser adicionada ao seu monte" << endl;
-                cin >> escolha;
-                stack<Carta> monteJogador1;
-                monteJogador1.push(cartasMesa[escolha]);
-                monteJogador1.push(cartasJogador1[escolha]);
-                cartasJogador1.erase(cartasJogador1.begin() + escolha);
-                cartasMesa.erase(cartasMesa.begin() + escolha);
-            }
-            else if(i == cartasMesa.size() - 1){
-                cout << "escolha qual das cartas colocar na mesa" << endl;
-                //mostras as opcoes possiveis
+    while(!cartasJogador1.empty() || !cartasJogador2.empty()){
+        if(vezJogador%2 == 0){
+            for(int i=0; i<cartasJogador1.size(); i++){
                 for(int i=0; i<cartasJogador1.size(); i++){
-                    cout << cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
+                    for(int j=0; j<cartasMesa.size(); j++){
+                        if(!cartasMesa.empty() && cartasJogador1[i].numero == cartasMesa[j].numero){
+                            cout << "escolha a carta da mesa que vai ser adicionada ao seu monte" << endl;
+                            for(int i=0; i<cartasMesa.size(); i++){
+                                cout << i << ". "<< cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
+                            }
+                            cin >> escolha;
+
+                            stack<Carta> monteJogador1;
+                            monteJogador1.push(cartasMesa[escolha]);
+                            cartasMesa.erase(cartasMesa.begin() + escolha);
+
+                            cout << "escolha a carta de sua mão que vai ser adicionada no monte" << endl;
+                            for(int i=0; i<cartasJogador1.size(); i++){
+                                cout << i << ". "<< cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
+                            }
+                            cin >> escolha;
+                            monteJogador1.push(cartasJogador1[escolha]);
+                            cartasJogador1.erase(cartasJogador1.begin() + escolha);
+                            jogadaFeita = true;
+                            vezJogador++;
+                        }
+                    }
+                }
+            }
+            if(!jogadaFeita) {
+                cout << "escolha qual das cartas colocar na mesa" << endl;
+                for(int i=0; i<cartasJogador1.size(); i++){
+                    cout << i << ". "<< cartasJogador1[i].naipe << " " << cartasJogador1[i].numero << endl;
                 }
                 cin >> escolha;
                 cartasMesa.push_back(cartasJogador1[escolha]);
                 cartasJogador1.erase(cartasJogador1.begin() + escolha);
+                vezJogador++;
             }
-            i++;
-            vezJogador++;
         }
-    }
-    else{
-        while(j<cartasMesa.size()){
-            int escolha;
-            if(cartasJogador2[i].numero == cartasMesa[i].numero){
-                print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
-                cout << "escolha a carta para ser adicionada ao seu monte" << endl;
-                cin >> escolha;
-                stack<Carta> monteJogador2;
-                monteJogador2.push(cartasMesa[escolha]);
-                monteJogador2.push(cartasJogador2[escolha]);
-                cartasJogador2.erase(cartasJogador2.begin() + escolha);
-                cartasMesa.erase(cartasMesa.begin() + escolha);
+        else{
+            jogadaFeita=false;
+            for(int i=0; i<cartasJogador2.size(); i++){
+                for(int j=0; i<cartasMesa.size(); j++){
+                    if(!cartasMesa.empty() && cartasJogador2[i].numero == cartasMesa[j].numero){
+                        print(cartasMesa, cartasJogador1, cartasJogador2);
+                        cout << "escolha a carta para ser adicionada ao seu monte" << endl;
+                        for(int i=0; i<cartasMesa.size(); i++){
+                            cout << i << ". " << cartasMesa[i].naipe << " " << cartasMesa[i].numero << endl;
+                        }
+                        cin >> escolha;
+
+                        stack<Carta> monteJogador2;
+                        monteJogador2.push(cartasMesa[escolha]);
+                        cartasMesa.erase(cartasMesa.begin() + escolha);
+
+                        cout << "escolha a carta que sera adicionada do seu monte" << endl;
+                        for(int i=0; i<cartasJogador2.size(); i++){
+                            cout << i << ". " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
+                        }
+                        cin >> escolha;
+                        monteJogador2.push(cartasJogador2[escolha]);
+                        cartasJogador2.erase(cartasJogador2.begin() + escolha);
+                        jogadaFeita=true;
+                        vezJogador++;
+                    }
+                }
             }
-            else if(i == cartasMesa.size() - 1){
+            if(!jogadaFeita){
                 cout << "escolha qual das cartas colocar na mesa" << endl;
-                //mostras as opcoes possiveis
                 for(int i=0; i<cartasJogador2.size(); i++){
-                    cout << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
+                    cout << i << ". " << cartasJogador2[i].naipe << " " << cartasJogador2[i].numero << endl;
                 }
                 cin >> escolha;
                 cartasMesa.push_back(cartasJogador2[escolha]);
                 cartasJogador1.erase(cartasJogador2.begin() + escolha);
+                vezJogador++;
             }
-            j++;
-            vezJogador++;
         }
     }
-    print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
 }
 
 void menu(stack<Carta> cartas, vector<Carta> cartasMesa, vector<Carta> cartasJogador1, vector<Carta> cartasJogador2){
     int selecionar;
-    cout << "1- começar jogo" << endl;
-    cout << "2- printar" << endl;
-    cout << "sair" << endl;
+    cout << "1- comecar jogo" << endl;
+    cout << "3- sair" << endl;
     cin >> selecionar;
 
     switch (selecionar){
     case 1:
-        cartasJogador1 = distribuirCartas(cartas);
-        cartasJogador2 = distribuirCartas(cartas);
-        break;
-    case 2:
-        print(cartas, cartasMesa, cartasJogador1, cartasJogador2);
+        print(cartasMesa, cartasJogador1, cartasJogador2);
         cout << endl;
         EscolherCarta(cartas, cartasMesa, cartasJogador1, cartasJogador2);
         break;
