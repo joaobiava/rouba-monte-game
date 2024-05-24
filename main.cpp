@@ -6,8 +6,7 @@
 
 using namespace std;
 
-struct Carta
-{
+struct Carta{
     string naipe;
     int numero;
 };
@@ -71,6 +70,7 @@ vector<Carta> distribuirCartas(stack<Carta> &baralho){
 }
 
 void print(vector<Carta> &cartasMesa, vector<Carta> &cartasJogador1, vector<Carta> &cartasJogador2){
+    system("cls");
     cout << endl << "--------------------------------------" << endl;
 
     cout << "Cartas na Mesa: " << endl;
@@ -106,7 +106,6 @@ void jogada(vector<Carta> &cartasJogador, vector<Carta> &cartasMesa, stack<Carta
 
                 monteJogador.push(cartasMesa[escolha]);
                 cartasMesa.erase(cartasMesa.begin() + escolha);
-
 
                 cout << "Escolha a carta de sua mao que vai ser adicionada no monte" << endl;
                 for (int k = 0; k < cartasJogador.size(); ++k){
@@ -149,6 +148,7 @@ void vezJogadores(vector<Carta> &cartasJogador1, vector<Carta> &cartasMesa, stac
                 cartasJogador1 = distribuirCartas(baralho);
             }
             if(!cartasJogador1.empty()){
+                cout << "vez do jogador 1:" << endl;
                 jogada(cartasJogador1, cartasMesa, monteJogador1);
             }
         } else{
@@ -156,6 +156,7 @@ void vezJogadores(vector<Carta> &cartasJogador1, vector<Carta> &cartasMesa, stac
                 cartasJogador2 = distribuirCartas(baralho);
             }
             if(!cartasJogador2.empty()){
+                cout << "vez do jogador 2" << endl;
                 jogada(cartasJogador2, cartasMesa, monteJogador2);
             }
         }
