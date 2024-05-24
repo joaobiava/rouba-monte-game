@@ -107,6 +107,7 @@ void jogada(vector<Carta> &cartasJogador, vector<Carta> &cartasMesa, stack<Carta
                 monteJogador.push(cartasMesa[escolha]);
                 cartasMesa.erase(cartasMesa.begin() + escolha);
 
+
                 cout << "Escolha a carta de sua mao que vai ser adicionada no monte" << endl;
                 for (int k = 0; k < cartasJogador.size(); ++k){
                     cout << k << ". " << cartasJogador[k].naipe << " " << cartasJogador[k].numero << endl;
