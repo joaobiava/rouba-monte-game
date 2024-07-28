@@ -69,7 +69,7 @@ vector<Carta> distribuirCartas(stack<Carta> &baralho){
     return player;
 }
 
-void print(vector<Carta> &cartasMesa, vector<Carta> &cartasJogador1, vector<Carta> &cartasJogador2){
+void print(vector<Carta> &cartasMesa, vector<Carta> &cartasDoJogador, stack<Carta> monteDoJogador){
     system("cls");
     cout << endl << "--------------------------------------" << endl;
 
@@ -78,14 +78,16 @@ void print(vector<Carta> &cartasMesa, vector<Carta> &cartasJogador1, vector<Cart
         cout << carta.naipe << " " << carta.numero << endl;
     }
 
-    cout << "Cartas do Jogador 1: " << endl;
-    for (Carta &carta : cartasJogador1){
+    cout << endl << "Cartas do Jogador: " << endl;
+    for (Carta &carta : cartasDoJogador){
         cout << carta.naipe << " " << carta.numero << endl;
     }
 
-    cout << "Cartas do Jogador 2: " << endl;
-    for (Carta &carta : cartasJogador2){
-        cout << carta.naipe << " " << carta.numero << endl;
+    if(!monteDoJogador.empty()){
+        cout << endl << "o topo do jogador oponente possui a carta: " << monteDoJogador.top().naipe << " " << monteDoJogador.top().numero << endl;
+    }
+    else{
+        cout << endl <<"o monte do oponente esta vazio, nao tem nada para roubar T-T" << endl;
     }
 
     cout << "--------------------------------------" << endl;
@@ -94,37 +96,43 @@ void print(vector<Carta> &cartasMesa, vector<Carta> &cartasJogador1, vector<Cart
 void jogada(vector<Carta> &cartasJogador, vector<Carta> &cartasMesa, stack<Carta> &monteJogador){
     int escolha;
     bool jogadaFeita = false;
+    vector<int> opcoesValidas;
 
     for (int i = 0; i < cartasJogador.size(); ++i){
         for (int j = 0; j < cartasMesa.size(); ++j){
-            if (cartasJogador[i].numero == cartasMesa[j].numero){
-                cout << "Escolha a carta da mesa que vai ser adicionada ao seu monte" << endl;
-                for (int k = 0; k < cartasMesa.size(); ++k){
-                    cout << k << ". " << cartasMesa[k].naipe << " " << cartasMesa[k].numero << endl;
-                }
-                cin >> escolha;
-
-                monteJogador.push(cartasMesa[escolha]);
-                cartasMesa.erase(cartasMesa.begin() + escolha);
-
-                cout << "Escolha a carta de sua mao que vai ser adicionada no monte" << endl;
-                for (int k = 0; k < cartasJogador.size(); ++k){
-                    cout << k << ". " << cartasJogador[k].naipe << " " << cartasJogador[k].numero << endl;
-                }
-                cin >> escolha;
-
-                monteJogador.push(cartasJogador[escolha]);
-                cartasJogador.erase(cartasJogador.begin() + escolha);
-
-                jogadaFeita = true;
-                break;
+            if ((cartasJogador[i].numero == cartasMesa[j].numero) && !jogadaFeita){
+                opcoesValidas.push_back(i);
             }
         }
     }
 
-    if (!jogadaFeita){
-        cout << "Escolha qual das cartas colocar na mesa" << endl;
-        for (int i = 0; i < cartasJogador.size(); ++i){
+    if(!opcoesValidas.empty()){
+        cout << "Escolha a carta de sua mao para pegar uma carta da mesa:" << endl;
+        for (int i = 0; i < opcoesValidas.size(); ++i) {
+            cout << i << ". " << cartasJogador[opcoesValidas[i]].naipe << " " << cartasJogador[opcoesValidas[i]].numero << endl;
+        }
+        cin >> escolha;
+
+        while(escolha > opcoesValidas.size()){
+            cin >> escolha;
+        }
+        
+        int indiceEscolhido = opcoesValidas[escolha];
+        int numeroEscolhido = cartasJogador[indiceEscolhido].numero;
+
+        for (int j = 0; j < cartasMesa.size(); ++j) {
+            if (cartasMesa[j].numero == numeroEscolhido) {
+                monteJogador.push(cartasMesa[j]);
+                cartasMesa.erase(cartasMesa.begin() + j);
+                break;
+            }
+        }
+
+        monteJogador.push(cartasJogador[indiceEscolhido]);
+        cartasJogador.erase(cartasJogador.begin() + indiceEscolhido);
+    } else{
+        cout << "Nao ha jogadas validas. Escolha uma carta para colocar na mesa:" << endl;
+        for (int i = 0; i < cartasJogador.size(); ++i) {
             cout << i << ". " << cartasJogador[i].naipe << " " << cartasJogador[i].numero << endl;
         }
         cin >> escolha;
@@ -134,12 +142,44 @@ void jogada(vector<Carta> &cartasJogador, vector<Carta> &cartasMesa, stack<Carta
     }
 }
 
+bool roubarMonte(vector<Carta> &cartasJogador, stack<Carta> &monteJogadorOponente, stack<Carta> &monteJogadorAtual){
+    int escolha;
+
+    if(monteJogadorOponente.empty()){
+        return false;
+    }
+
+    for(int i=0; i<cartasJogador.size(); i++){
+        if(cartasJogador[i].numero == monteJogadorOponente.top().numero){
+            cout << "quer sacanear seu amigo?" << endl;
+            cout << "1- sim, estou atras da vitoria, nao de ua amizade" << endl;
+            cout << "2- tadinho dele" << endl;
+            cin >> escolha;
+            if(escolha == 1){
+                stack<Carta> aux;
+                while(!monteJogadorOponente.empty()){
+                    aux.push(monteJogadorOponente.top());
+                    monteJogadorOponente.pop();
+                    monteJogadorAtual.push(aux.top());
+                    aux.pop();
+                }
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
 void vencedor(stack<Carta> monteJogador1, stack<Carta> monteJogador2);
 
 void vezJogadores(vector<Carta> &cartasJogador1, vector<Carta> &cartasMesa, stack<Carta> &baralho, vector<Carta> &cartasJogador2){
     stack<Carta> monteJogador1;
     stack<Carta> monteJogador2;
     int n = 0;
+    bool jogadaFeita = false;
 
     while (!cartasJogador1.empty() || !cartasJogador2.empty() || !baralho.empty()){
 
@@ -147,23 +187,29 @@ void vezJogadores(vector<Carta> &cartasJogador1, vector<Carta> &cartasMesa, stac
             if(cartasJogador1.empty() && !baralho.empty()){
                 cartasJogador1 = distribuirCartas(baralho);
             }
+            print(cartasMesa, cartasJogador1, monteJogador2);
             if(!cartasJogador1.empty()){
                 cout << "vez do jogador 1:" << endl;
-                jogada(cartasJogador1, cartasMesa, monteJogador1);
+                jogadaFeita = roubarMonte(cartasJogador1, monteJogador2, monteJogador1);
+                if(!jogadaFeita){
+                    jogada(cartasJogador1, cartasMesa, monteJogador1);
+                }
             }
         } else{
             if(cartasJogador2.empty() && !baralho.empty()){
                 cartasJogador2 = distribuirCartas(baralho);
             }
+            print(cartasMesa, cartasJogador2, monteJogador1);
             if(!cartasJogador2.empty()){
                 cout << "vez do jogador 2" << endl;
-                jogada(cartasJogador2, cartasMesa, monteJogador2);
+                jogadaFeita = roubarMonte(cartasJogador2, monteJogador1, monteJogador2);
+
+                if(!jogadaFeita){
+                    jogada(cartasJogador2, cartasMesa, monteJogador2);
+                }
             }
         }
-        
         n++;
-        print(cartasMesa, cartasJogador1, cartasJogador2); // Para ver o estado após cada jogada
-
     }
     vencedor(monteJogador1, monteJogador2);
 }
@@ -200,7 +246,6 @@ bool menu(stack<Carta> baralho, vector<Carta> cartasMesa, vector<Carta> cartasJo
 
     switch (selecionar){
     case 1:
-        print(cartasMesa, cartasJogador1, cartasJogador2);
         cout << endl;
         vezJogadores(cartasJogador1, cartasMesa, baralho, cartasJogador2);
         break;
