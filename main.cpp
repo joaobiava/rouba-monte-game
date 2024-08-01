@@ -69,11 +69,34 @@ vector<Carta> distribuirCartas(stack<Carta> &baralho){
     return player;
 }
 
+int particao(vector<Carta> &cartasMesa, int min, int max) {
+    int pivo = cartasMesa[max].numero;
+    int i = (min - 1);
+
+    for (int j = min; j < max; j++){
+        if (cartasMesa[j].numero < pivo){
+            i++;
+            swap(cartasMesa[i], cartasMesa[j]);
+        }
+    }
+    swap(cartasMesa[i + 1], cartasMesa[max]);
+    return (i + 1);
+}
+
+void quicksort(vector<Carta> &cartasMesa, int min, int max) {
+    if (min < max) {
+        int pivo = particao(cartasMesa, min, max);
+        quicksort(cartasMesa, min, pivo - 1);
+        quicksort(cartasMesa, pivo + 1, max);
+    }
+}
+
 void print(vector<Carta> &cartasMesa, vector<Carta> &cartasDoJogador, stack<Carta> monteDoJogador){
     system("cls");
     cout << endl << "--------------------------------------" << endl;
 
     cout << "Cartas na Mesa: " << endl;
+    quicksort(cartasMesa, 0, cartasMesa.size() - 1);
     for (Carta &carta : cartasMesa){
         cout << carta.naipe << " " << carta.numero << endl;
     }
