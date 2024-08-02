@@ -101,6 +101,7 @@ void print(vector<Carta> &cartasMesa, vector<Carta> &cartasDoJogador, stack<Cart
         cout << carta.naipe << " " << carta.numero << endl;
     }
 
+    quicksort(cartasDoJogador, 0, cartasDoJogador.size() - 1);
     cout << endl << "Cartas do Jogador: " << endl;
     for (Carta &carta : cartasDoJogador){
         cout << carta.naipe << " " << carta.numero << endl;
@@ -175,7 +176,7 @@ bool roubarMonte(vector<Carta> &cartasJogador, stack<Carta> &monteJogadorOponent
     for(int i=0; i<cartasJogador.size(); i++){
         if(cartasJogador[i].numero == monteJogadorOponente.top().numero){
             cout << "quer sacanear seu amigo?" << endl;
-            cout << "1- sim, estou atras da vitoria, nao de ua amizade" << endl;
+            cout << "1- sim, estou atras da vitoria, nao de uma amizade" << endl;
             cout << "2- tadinho dele" << endl;
             cin >> escolha;
             if(escolha == 1){
